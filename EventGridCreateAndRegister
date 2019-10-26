@@ -1,0 +1,19 @@
+# ------------------------
+# az eventgrid event-subscription create 
+# az eventgrid topic create 
+# az eventhubs eventhub list 
+# az eventhubs namespace list 
+# az group list
+# ------------------------
+
+#get variables needed
+$resourceGroup = az group list --query '[0].name' --output json
+$namespace = az eventhubs namespace list --resource-group $resourceGroup --query '[0].name' --output json
+$hubid = az eventhubs eventhub list --resource-group $resourceGroup --namespace-name $namespace --query '[0].id' --output json
+
+
+#create event grid topic and subscription
+$topicname  = "myTopic"
+az eventgrid topic create --name $topicname -l southcentralus -g $resourceGroup 
+az eventgrid event-subscription create --topic-name $topicname -g $resourceGroup --name subtoeventhub --endpoint-type eventhub --endpoint $hubid
+#
