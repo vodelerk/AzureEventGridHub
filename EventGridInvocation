@@ -1,0 +1,23 @@
+# ------------------------
+# az eventgrid topic key list 
+# az eventgrid topic list 
+# ------------------------
+
+#post sample events to event grid
+$endpoint = az eventgrid topic list --resource-group $resourceGroup --query '[0].endpoint' --output tsv
+$key = az eventgrid topic key list --name $topicname -g $resourceGroup --query "key1" --output tsv
+$eventID = Get-Random 99999
+$eventDate = Get-Date -Format s
+$htbody = @{
+    id= $eventID
+    eventType="recordInserted"
+    subject="myapp/guitars/gibson"
+    eventTime= $eventDate   
+    data= @{
+        make="Gibson"
+        model="Les Paul"
+    }
+    dataVersion="1.0"
+}
+$body = "["+(ConvertTo-Json $htbody)+"]"
+Invoke-WebRequest -Uri $endpoint -Method POST -Body $body -Headers @{"aeg-sas-key" = $key}
