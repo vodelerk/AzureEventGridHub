@@ -1,0 +1,7 @@
+# create a Service Bus namespace and queue
+$resourceGroup = az group list --query '[0].name' --output json
+$namespaceName  = "LALab" + (Get-Date).ticks
+
+az servicebus namespace create --resource-group $resourceGroup --name $namespaceName --location southcentralus
+az servicebus queue create --resource-group $resourceGroup --namespace-name $namespaceName --name myQueue
+#
